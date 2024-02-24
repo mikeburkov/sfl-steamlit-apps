@@ -39,7 +39,7 @@ if uploaded_file is not None:
     # Example: Remove decimals if Contact IDs are numeric
     transformed_data.index = transformed_data.index.map('{:.0f}'.format)
     st.download_button(label="Download as CSV", 
-                       data=transformed_data.to_csv(index=False),
+                       data=transformed_data.to_csv(index=True),
                        file_name='TKU List Final.csv')
 
     st.dataframe(transformed_data)
