@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # UI Elements
-st.title("CSV Transformation App")
+st.title("TKU reports, Virtuous to Mailer CSV Formatting")
 uploaded_file = st.file_uploader("Upload your CSV file", type=['csv'])
 
 if uploaded_file is not None:
