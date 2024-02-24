@@ -32,7 +32,7 @@ if uploaded_file is not None:
     transformed_data = transform_data(data.copy())
     transformed_data = transformed_data.set_index('Contact Id') # Or another suitable column
 
-   # print(transformed_data.info())
+    print(transformed_data.info())
     
 
     # Apply formatting within the display context
@@ -42,6 +42,29 @@ if uploaded_file is not None:
                        data=transformed_data.to_csv(index=True),
                        file_name='TKU List Final.csv')
 
-    st.dataframe(transformed_data)
+    def format_gift_and_amount(val):   
+      if val is None:  # Check for None explicitly
+          return val   # Return None without formatting
+
+      try:
+          # Try converting to integer
+          as_int = int(val) 
+          return '{:.0f}'.format(as_int)
+      except ValueError:
+          try:
+              # Try converting to float
+              as_float = float(val)
+              return '{:.0f}'.format(as_float) if as_float.is_integer() else '{:.2f}'.format(as_float)  
+          except ValueError:
+              # If all else fails, return the original value
+              return val 
+# Apply formatting 
+    #st.dataframe(transformed_data.style.map(format_gift_and_amount))  # Use map instead of applymap 
+    st.dataframe(transformed_data)  # Use map instead of applymap 
+
+#    st.dataframe(transformed_data.style.format({
+#      'Gift Id': '{:.0f}',  # Remove decimal separators for Gift Id
+#      'Amount':  lambda x: f'{x:.0f}' if x.is_integer() else f'{x:.2f}' 
+#  }))
 
     
