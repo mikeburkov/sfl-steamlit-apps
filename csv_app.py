@@ -1,9 +1,34 @@
 import streamlit as st
 import pandas as pd
+import numpy as np  # We'll need numpy to check for NaN
 
 # UI Elements
 st.title("TKU reports, Virtuous to Mailer CSV Formatting")
-uploaded_file = st.file_uploader("Upload your CSV file", type=['csv'])
+
+# Display the format of the input CSV
+txt = st.text_area(
+    "Expected column sequence",
+    "Contact Id | "
+    "Contact Name | "
+    "Contact Type | "
+    "Contact Informal Name | "
+    "Contact Primary First Name | "
+    "Contact Primary Last Name | "
+    "Contact Primary Address Line 1 | "
+    "Contact Primary Address City | "
+    "Contact Primary Address State | "
+    "Contact Primary Address Postal | "
+    "Contact Primary Address Country | "
+    "Gift Id | "
+    "Gift Date | "
+    "Amount | "
+    "Segment Code | "
+    "Notes",
+    )
+
+
+
+uploaded_file = st.file_uploader("Upload your TKU List file in the CSV format", type=['csv'])
 
 if uploaded_file is not None:
     # Load the CSV
@@ -38,33 +63,32 @@ if uploaded_file is not None:
     # Apply formatting within the display context
     # Example: Remove decimals if Contact IDs are numeric
     transformed_data.index = transformed_data.index.map('{:.0f}'.format)
+    numeric_columns = transformed_data.select_dtypes(include=['float64']).columns
+    print(numeric_columns)
+
+    def format_all_columns(x): 
+      if isinstance(x, int):  
+          return f'{x:,}'.replace(',', '') 
+      elif isinstance(x, float): 
+          if np.isnan(x):  # Check for an empty float64 (NaN)
+              return ''  # Return empty string
+          elif x.is_integer():
+              return f'{x:.0f}' 
+          else:
+              return f'{x:.2f}'  
+      else:
+          try:  
+              return str(x)  
+          except ValueError:
+              return x
+
+
+# Apply to relevant columns (modify column_subset as needed)
+    column_subset = transformed_data.select_dtypes(include=['int64', 'float64']).columns
+    transformed_data[column_subset] = transformed_data[column_subset].map(format_all_columns)
+
     st.download_button(label="Download as CSV", 
                        data=transformed_data.to_csv(index=True),
                        file_name='TKU List Final.csv')
+    st.dataframe(transformed_data)
 
-    def format_gift_and_amount(val):   
-      if val is None:  # Check for None explicitly
-          return val   # Return None without formatting
-
-      try:
-          # Try converting to integer
-          as_int = int(val) 
-          return '{:.0f}'.format(as_int)
-      except ValueError:
-          try:
-              # Try converting to float
-              as_float = float(val)
-              return '{:.0f}'.format(as_float) if as_float.is_integer() else '{:.2f}'.format(as_float)  
-          except ValueError:
-              # If all else fails, return the original value
-              return val 
-# Apply formatting 
-    #st.dataframe(transformed_data.style.map(format_gift_and_amount))  # Use map instead of applymap 
-    st.dataframe(transformed_data)  # Use map instead of applymap 
-
-#    st.dataframe(transformed_data.style.format({
-#      'Gift Id': '{:.0f}',  # Remove decimal separators for Gift Id
-#      'Amount':  lambda x: f'{x:.0f}' if x.is_integer() else f'{x:.2f}' 
-#  }))
-
-    
