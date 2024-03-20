@@ -7,7 +7,7 @@ st.title("TKU reports, Virtuous to Mailer CSV Formatting")
 
 # Display the format of the input CSV
 txt = st.text_area(
-    "Expected column sequence",
+    "TKU List Column Structure",
     "Contact Id | "
     "Contact Name | "
     "Contact Type | "
