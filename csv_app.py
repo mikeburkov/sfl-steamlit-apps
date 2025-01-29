@@ -32,8 +32,10 @@ uploaded_file = st.file_uploader(
 )
 
 if uploaded_file is not None:
+    print("HELLO")
     # Load the CSV
     data = pd.read_csv(uploaded_file, encoding="latin1")
+    print(data.columns)
 
     def flatten_lists(df):
         cols = ["Gift Id", "Gift Date", "Amount", "Segment Code", "Notes"]
