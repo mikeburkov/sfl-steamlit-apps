@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np  # We'll need numpy to check for NaN
 
 # UI Elements
-st.title("TKU reports, Virtuous to Mailer CSV Formatting")
+st.title("TKU reports, Virtuous to Mailer CSV Formatting.")
 
 # Display the format of the input CSV
 txt = st.text_area(
